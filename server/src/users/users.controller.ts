@@ -28,6 +28,7 @@ export class UsersController {
   async findAll() {
     try {
       const users = await this.usersService.findAll();
+      this.logger.log('All users retrieved successfully');
       return {
         message: 'Users retrieved successfully',
         data: users,
@@ -53,6 +54,7 @@ export class UsersController {
   async findOne(@Param('id', ParseIntPipe) id: number) {
     try {
       const user = await this.usersService.findOne(id);
+      this.logger.log(`User with id ${id} retrieved successfully`);
       return {
         message: 'User found',
         data: user,
@@ -77,6 +79,7 @@ export class UsersController {
   async create(@Body() data: Partial<User>) {
     try {
       const user = await this.usersService.create(data);
+      this.logger.log(`User created successfully with id ${user.id}`);
       return {
         message: 'User created successfully',
         data: user,
@@ -99,6 +102,7 @@ export class UsersController {
   ) {
     try {
       const user = await this.usersService.update(id, data);
+      this.logger.log(`User with id ${id} updated successfully`);
       return {
         message: 'User updated successfully',
         data: user,
@@ -124,6 +128,7 @@ export class UsersController {
   async remove(@Param('id', ParseIntPipe) id: number) {
     try {
       await this.usersService.remove(id);
+      this.logger.log(`User with id ${id} deleted successfully`);
       return {
         message: 'User deleted successfully',
       };

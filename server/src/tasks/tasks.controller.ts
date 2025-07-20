@@ -28,6 +28,7 @@ export class TasksController {
   async findAll(): Promise<{ message: string; data: Task[] }> {
     try {
       const tasks = await this.tasksService.findAll();
+      this.logger.log('All tasks retrieved successfully');
       return {
         message: 'Tasks retrieved successfully',
         data: tasks,
@@ -54,6 +55,7 @@ export class TasksController {
   ): Promise<{ message: string; data: Task }> {
     try {
       const task = await this.tasksService.findOne(id);
+      this.logger.log(`Task with id ${id} retrieved successfully`);
       return {
         message: 'Task found',
         data: task,
@@ -80,6 +82,7 @@ export class TasksController {
   ): Promise<{ message: string; data: Task }> {
     try {
       const task = await this.tasksService.create(data);
+      this.logger.log(`Task created successfully with id ${task.id}`);
       return {
         message: 'Task created successfully',
         data: task,
@@ -101,6 +104,7 @@ export class TasksController {
   ): Promise<{ message: string; data: Task }> {
     try {
       const task = await this.tasksService.update(id, data);
+      this.logger.log(`Task with id ${id} updated successfully`);
       return {
         message: 'Task updated successfully',
         data: task,
@@ -127,6 +131,7 @@ export class TasksController {
   ): Promise<{ message: string }> {
     try {
       await this.tasksService.remove(id);
+      this.logger.log(`Task with id ${id} deleted successfully`);
       return { message: 'Task deleted successfully' };
     } catch (err: unknown) {
       if (err instanceof Error) {

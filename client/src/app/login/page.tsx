@@ -6,25 +6,32 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { loginUser } from "@/lib/api/auth/login";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await loginUser({ email, password });
+    setLoading(true);
 
-      console.log("🧪 Login response:", response); //verifica
+    try {
+      toast.info("Signing in...");
+      const response = await loginUser({ email, password });
+      //alert("Login successful! Redirecting to your dashboard...");
+      toast.success("Login successful!");
       // Store the token in localStorage or a cookie
       localStorage.setItem("token", response.access_token);
 
       router.push("/tasks");
     } catch (error) {
-      console.error("❌ Login error:", error);
-      alert("Invalid credentials. Please try again.");
+      toast.error("Invalid credentials. Please try again.");
+      //alert("Invalid credentials. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,7 +63,11 @@ export default function LoginPage() {
             error=""
           />
           <div className=" flex justify-center mt-6">
-            <Button type="blueButton" htmlType="submit" label="Sign in" />
+            <Button
+              type="blueButton"
+              htmlType="submit"
+              label={loading ? "Signing in..." : "Sign in"}
+            />
           </div>
         </form>
         <p className="mt-4 text-center text-sm text-gray-600">

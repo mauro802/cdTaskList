@@ -6,6 +6,7 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { registerUser } from "@/lib/api/auth/register";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function RegisterPage() {
   // Hooks
@@ -13,6 +14,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Password validation rules
   const validations = {
@@ -35,21 +37,27 @@ export default function RegisterPage() {
       validations.match;
 
     if (!valid) {
-      alert("Please fix the password requirements.");
+      toast.error("Please fix the password requirements.");
       return;
     }
     try {
+      setLoading(true);
+      toast.info("Creating account...");
+
       const response = await registerUser({ email, password });
+
+      toast.success("Account created! Redirecting to login...");
 
       router.push("/login");
     } catch (error) {
-      console.error("❌ Registration error:", error);
-      alert("Registration failed. Try again.");
+      toast.error("Registration failed. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className=" flex items-center justify-center  px-4">
+    <div className=" flex items-center bg-gray-50 justify-center pt-4 px-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow p-6">
         <h2 className="text-center text-2xl font-semibold mb-6">
           Create an Account
@@ -80,51 +88,25 @@ export default function RegisterPage() {
           <div className="text-sm text-gray-700 mb-2">
             Password must contain at least:
           </div>
+
           <ul className="mb-4 space-y-1">
-            <li
-              className={`flex items-center text-sm ${
-                validations.length ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              <span className="mr-2">{validations.length ? "✔️" : "❌"}</span>8
-              characters
-            </li>
-            <li
-              className={`flex items-center text-sm ${
-                validations.uppercase ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              <span className="mr-2">
-                {validations.uppercase ? "✔️" : "❌"}
-              </span>
-              One uppercase letter
-            </li>
-            <li
-              className={`flex items-center text-sm ${
-                validations.lowercase ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              <span className="mr-2">
-                {validations.lowercase ? "✔️" : "❌"}
-              </span>
-              One lowercase letter
-            </li>
-            <li
-              className={`flex items-center text-sm ${
-                validations.number ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              <span className="mr-2">{validations.number ? "✔️" : "❌"}</span>
-              One number
-            </li>
-            <li
-              className={`flex items-center text-sm ${
-                validations.symbol ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              <span className="mr-2">{validations.symbol ? "✔️" : "❌"}</span>
-              One symbol
-            </li>
+            {[
+              { label: "8 characters", valid: validations.length },
+              { label: "One uppercase letter", valid: validations.uppercase },
+              { label: "One lowercase letter", valid: validations.lowercase },
+              { label: "One number", valid: validations.number },
+              { label: "One symbol", valid: validations.symbol },
+            ].map((rule, idx) => (
+              <li
+                key={idx}
+                className={`flex items-center text-sm ${
+                  rule.valid ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                <span className="mr-2">{rule.valid ? "✔️" : "❌"}</span>
+                {rule.label}
+              </li>
+            ))}
           </ul>
 
           <Input
@@ -145,7 +127,7 @@ export default function RegisterPage() {
             <Button
               type="blueButton"
               htmlType="submit"
-              label="Create an Account"
+              label={loading ? "Creating..." : "Create an Account"}
             />
           </div>
         </form>

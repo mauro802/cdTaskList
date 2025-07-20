@@ -1,9 +1,10 @@
 "use client";
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import TaskItem from "./TaskItem";
 import Button from "./Button";
 import TaskModal from "./TaskModal";
 import { Task, Status } from "../app/types";
-import { useState, useEffect } from "react";
 import { createTask } from "@/lib/api/tasks/create";
 import { updateTask } from "@/lib/api/tasks/update";
 import { getAllTasks } from "@/lib/api/tasks/getAll";
@@ -21,8 +22,9 @@ export default function TaskList() {
         const allTasks = await getAllTasks();
 
         setTasks(allTasks);
+        toast.success("Tasks loaded");
       } catch (error) {
-        console.error("❌ Error fetching tasks:", error);
+        toast.error("Failed to load tasks");
       }
     };
 
@@ -54,6 +56,7 @@ export default function TaskList() {
         const response = await updateTask(task);
         const updated = response.data;
         setTasks((prev) => prev.map((t) => (t.id === task.id ? updated : t)));
+        toast.success("Task updated successfully");
       } else {
         const response = await createTask({
           name: task.name,
@@ -62,10 +65,10 @@ export default function TaskList() {
         });
         const created = response.data;
         setTasks((prev) => [...prev, created]);
+        toast.success("Task created successfully");
       }
     } catch (error) {
-      console.error("❌ Error saving task:", error);
-      alert("Error saving task");
+      toast.error("Failed to save task");
     }
 
     handleCloseModal();
@@ -77,9 +80,9 @@ export default function TaskList() {
     try {
       await deleteTask(editTask.id);
       setTasks((prev) => prev.filter((t) => t.id !== editTask.id));
+      toast.success("Task deleted successfully");
     } catch (error) {
-      console.error("❌ Error deleting task:", error);
-      alert("Error deleting task");
+      toast.error("Failed to delete task");
     }
 
     handleCloseModal();

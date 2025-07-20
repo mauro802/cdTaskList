@@ -11,6 +11,8 @@ export class AuthController {
   async login(@Body() body: { email: string; password: string }) {
     try {
       const data = await this.authService.login(body.email, body.password);
+
+      this.logger.log(`Login successful for email: ${body.email}`);
       return {
         message: 'Login successful',
         ...data,

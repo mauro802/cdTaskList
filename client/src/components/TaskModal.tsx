@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "./Button";
 import { Status, TaskModalProps } from "../app/types";
+import { toast } from "react-toastify";
 
 export default function TaskModal({
   mode,
@@ -15,6 +16,16 @@ export default function TaskModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!name.trim()) {
+      toast.error("Task name is required.");
+      return;
+    }
+
+    if (!status) {
+      toast.error("Status is required.");
+      return;
+    }
+
     onSave({
       id: task?.id ?? Date.now(),
       name,
