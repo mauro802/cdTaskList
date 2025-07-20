@@ -1,9 +1,12 @@
-import Image from "next/image";
+import RegisterPage from "./register/page";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <div>cdTaskList</div>
+    <div
+      className="font-sans bg-gray-50
+     items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20"
+    >
+      <RegisterPage />
     </div>
   );
 }
